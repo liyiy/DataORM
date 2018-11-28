@@ -1,5 +1,5 @@
 require 'active_support/inflector'
-// pluralizes words 
+# pluralizes words 
 
 class SQLObject 
    
