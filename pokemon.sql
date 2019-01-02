@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS pokemon;
+DROP TABLE IF EXISTS pokemons;
 DROP TABLE IF EXISTS trainers;
 DROP TABLE IF EXISTS towns;
 
-CREATE TABLE pokemon (
+CREATE TABLE pokemons (
    id INTEGER PRIMARY KEY,
    name VACHAR(255) NOT NULL,
    trainer_id INTEGER,
@@ -34,7 +34,7 @@ VALUES
    (5, "Nurse Joy", NULL);
 
 INSERT INTO 
-   pokemon (id, name, trainer_id)
+   pokemons (id, name, trainer_id)
 VALUES 
    (1, "Pikachu", 1),
    (2, "Charmander", 1),
