@@ -55,18 +55,18 @@ class SQLObject
    end 
 
    def self.find(id)
-      result = DBConnection.execute(<<-SQL, id: id)[0]
-         SELECT 
-            * 
+      result = DBConnection.execute(<<-SQL, id)
+         SELECT
+         *
          FROM
-            #{self.table_name}
-         WHERE 
-            id = :id 
-      SQL 
-      return nil if results.nil?
-      self.new(result)  
+         #{self.table_name}
+         WHERE
+         #{self.table_name}.id = ?
+      SQL
 
-   end 
+      parse_all(result).first
+   end
+
 
    def initialize(params = {})
       params.each do |attr_name, value| 
@@ -87,20 +87,19 @@ class SQLObject
       self.class.columns.map { |attr| self.send(attr) }
    end 
 
-   def insert 
-      columns = self.class.columns.drop(1)
-      col_names = columns.map(&:to_s).join(", ")
-      question_marks = (["?"] * columns.count).join(", ")
-
+   def insert
+      col_names = self.class.columns.drop(1)
+      col_names_insert = col_names.join(", ")
+      question_marks = (["?"] * col_names.length).join(", ")
       DBConnection.execute(<<-SQL, *attribute_values.drop(1))
-         INSERT INTO 
-            #{self.class.table_name} (#{col_names})
-         VALUES 
+         INSERT INTO
+            #{self.class.table_name} (#{col_names_insert})
+         VALUES
             (#{question_marks})
-      SQL 
+      SQL
 
       self.id = DBConnection.last_insert_row_id
-   end 
+   end
 
    def update 
       set_line = self.class.columns.map { |attr| "#{attr} = ?"}.join(", ")

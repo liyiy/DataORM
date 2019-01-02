@@ -1,25 +1,29 @@
 require_relative 'db_connection'
 require_relative 'sql_object'
 
-module Searchable 
 
+module Searchable
    def where(params)
-      where_line = params.keys.map { |key| "#{key} = ?" }.join(" AND ")
+      where_line = params.map do |k, v|
+         if v.is_a?(String)
+         v = "'#{v}'"
+         end
+         "#{k.to_s} = #{v}"
+      end.join(" AND ")
 
-      results = DBConnection.execute(<<-SQL, *params.values)
-         SELECT 
-            * 
-         FROM 
-            #{table_name}
-         WHERE 
+      result = DBConnection.execute(<<-SQL)
+         SELECT
+            *
+         FROM
+            #{self.table_name}
+         WHERE
             #{where_line}
-      SQL 
+      SQL
 
-      parse_all(results)
+      result.map {|attributes| self.new(attributes)}
    end
-   
-end 
+end
 
-class SQLObject 
-   extend Searchable 
-end 
+class SQLObject
+   extend Searchable
+end
